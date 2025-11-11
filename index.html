@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Mortgage Shadow Sparring</title>
+  <style>
+    :root{
+      --electric-blue:#00bfff; --deep-blue:#0f4c81; --silver:#c7ced6;
+      --bg:#f4f7fb; --card-bg:#ffffff; --radius:12px; --max-width:980px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family: Inter, "Segoe UI", Roboto, system-ui, -apple-system, "Helvetica Neue", Arial;
+      background: radial-gradient(800px 400px at 10% 10%, rgba(0,191,255,0.06), transparent 10%),
+                  radial-gradient(700px 350px at 90% 90%, rgba(15,76,129,0.04), transparent 12%),
+                  var(--bg);
+      color:#102030; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+      padding:2rem 1rem; display:flex; justify-content:center; align-items:flex-start; gap:1rem;
+    }
+    .container{width:100%; max-width:var(--max-width);}
+    header{
+      background: linear-gradient(90deg,var(--electric-blue),var(--deep-blue));
+      color:white; padding:1.25rem; border-radius:calc(var(--radius)-2px);
+      box-shadow:0 8px 30px rgba(15,76,129,0.18); display:flex; align-items:center; gap:1rem;
+      margin-bottom:1rem;
+    }
+    .logo{width:72px;height:72px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.05));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:28px;border:1px solid rgba(255,255,255,0.08)}
+    header .title{flex:1}
+    header h1{margin:0;font-size:1.35rem;letter-spacing:0.2px}
+    header p{margin:0.25rem 0 0 0;opacity:0.92;font-size:0.95rem}
+    main{display:grid;grid-template-columns:1fr 360px;gap:1rem;align-items:start}
+    .card{background:var(--card-bg);border-radius:var(--radius);padding:1.1rem;box-shadow:0 6px 18px rgba(16,32,48,0.06);border:1px solid rgba(16,32,48,0.04)}
+    .wide{grid-column:1 / 2}
+    .right-col{grid-column:2 / 3;position:sticky;top:1rem;height:fit-content}
+    h2{margin:0 0 0.6rem 0;color:var(--deep-blue);font-size:1.05rem}
+    p{margin:0 0 0.75rem 0;line-height:1.45}
+    ul,ol{margin:0 0 0.75rem 1.15rem;padding:0.15rem 0}
+    .divider{height:1px;background:linear-gradient(90deg, rgba(15,76,129,0.06), transparent);margin:0.75rem 0;border-radius:2px}
+    .round{border-left:4px solid var(--electric-blue);padding:0.9rem;border-radius:8px;margin-bottom:0.85rem;background: linear-gradient(180deg, rgba(0,191,255,0.02), rgba(15,76,129,0.01))}
+    .round h3{margin:0 0 0.45rem 0;display:flex;align-items:center;gap:0.5rem;font-size:1rem}
+    .muted{color:#415268;font-size:0.95rem}
+    .timer-label{display:flex;justify-content:space-between;align-items:center;gap:0.5rem;font-size:0.95rem;margin-top:0.3rem}
+    .timer-bar{background:linear-gradient(90deg, rgba(6,18,34,0.04), rgba(6,18,34,0.02));border-radius:999px;height:18px;width:100%;overflow:hidden;margin-top:0.6rem;border:1px solid rgba(6,18,34,0.03)}
+    .fill{height:100%;background:linear-gradient(90deg,var(--electric-blue),var(--deep-blue));border-radius:inherit;width:0%;transition:width 0.2s linear}
+    .notes{min-height:120px;border-radius:10px;border:1px dashed var(--silver);padding:0.6rem;background:linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0.5));font-size:0.95rem;color:#223043;resize:vertical}
+    .cta-row{display:flex;gap:0.6rem;margin-top:0.8rem;flex-wrap:wrap}
+    .btn{appearance:none;border:0;padding:0.6rem 0.85rem;border-radius:10px;font-weight:600;cursor:pointer;color:white;background:var(--deep-blue);box-shadow:0 8px 20px rgba(15,76,129,0.12);transition:transform .12s ease, box-shadow .12s ease}
+    .btn.secondary{background:transparent;color:var(--deep-blue);border:1px solid rgba(15,76,129,0.12);box-shadow:none}
+    .btn:active{transform:translateY(1px)}
+    .meta{display:grid;gap:0.6rem}
+    .meta .small{font-size:0.88rem;color:#2b3f4f;display:flex;justify-content:space-between;align-items:center;gap:0.5rem}
+    .persona-list li{margin-bottom:0.45rem}
+    @media (max-width:980px){main{grid-template-columns:1fr}.right-col{position:static}header{flex-direction:row;gap:0.9rem}}
+    @media (max-width:520px){body{padding:1rem}.logo{width:56px;height:56px;font-size:22px}header h1{font-size:1.05rem}.btn{padding:0.5rem 0.7rem;font-size:0.95rem}}
+    .timer-controls{display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:0.75rem}
+    .preset-btn{background:transparent;border:1px solid rgba(15,76,129,0.12);padding:0.45rem 0.6rem;border-radius:8px;cursor:pointer;color:var(--deep-blue);font-weight:600}
+    .time-display{font-family:monospace;font-size:1.1rem;background:#f2f6fb;padding:0.35rem 0.6rem;border-radius:8px;border:1px solid rgba(6,18,34,0.04)}
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">MSS</div>
+      <div class="title">
+        <h1>🥊 Mortgage Shadow Sparring</h1>
+        <p>Solo Role-Play for Mortgage Sales Mastery</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:0.5rem">
+        <div style="background:rgba(255,255,255,0.08);padding:0.45rem 0.7rem;border-radius:999px;color:white;font-weight:700">Practice · Polish · Close</div>
+      </div>
+    </header>
+
+    <main>
+      <section class="card wide">
+        <h2>🎯 Purpose</h2>
+        <p>To help mortgage sales professionals sharpen their pitch, objection handling, and product knowledge through dynamic, solo role-play—just like a boxer visualizing and reacting to an imaginary opponent.</p>
+
+        <div class="divider"></div>
+
+        <h2>🧩 Activity Setup</h2>
+        <ul>
+          <li><strong>Duration:</strong> 15–20 minutes</li>
+          <li><strong>Materials:</strong> Mirror (optional); timer; cue cards (optional); space to move</li>
+        </ul>
+
+        <div class="divider"></div>
+
+        <h2>🔄 Round Breakdown</h2>
+
+        <div class="round" id="round1">
+          <h3>🥇 Round 1: Jab Your Value</h3>
+          <p class="muted"><strong>Goal:</strong> Practice delivering your value proposition in 30 seconds.</p>
+          <p><strong>Action:</strong> Imagine a skeptical client. Deliver your pitch confidently, using gestures and movement.</p>
+          <p><strong>Variation:</strong> Try 4 personas: client with no goals; client with goals; client knowledgeable about refinancing; client not knowledgeable about refinancing.</p>
+          <div class="timer-label">
+            <div>Timer: <strong>30 seconds</strong></div>
+            <div class="muted">Short sprint</div>
+          </div>
+          <div class="timer-bar" aria-hidden="true"><div class="fill" data-target-seconds="30"></div></div>
+        </div>
+
+        <div class="round" id="round2">
+          <h3>🥈 Round 2: Dodge Objections</h3>
+          <p class="muted"><strong>Goal:</strong> React to common objections with fluid, confident responses.</p>
+          <p><strong>Action:</strong> Call out objections like: “Your rates are too high!”; “I’m shopping around.”; “I don’t want to pay closing costs.” Respond with clarity and empathy—like slipping a punch and countering.</p>
+          <div class="timer-label">
+            <div>Timer: <strong>2 minutes</strong></div>
+            <div class="muted">Controlled reps</div>
+          </div>
+          <div class="timer-bar" aria-hidden="true"><div class="fill" data-target-seconds="120"></div></div>
+        </div>
+
+        <div class="round" id="round3">
+          <h3>🥉 Round 3: Combo Closing</h3>
+          <p class="muted"><strong>Goal:</strong> Practice closing techniques with momentum.</p>
+          <p><strong>Action:</strong> Use a 3-step combo: 1) Reaffirm value; 2) Ask a closing question; 3) Handle hesitation.</p>
+          <p><strong>Example:</strong> “Based on what we discussed, this loan fits your goals. Should we move forward today?”</p>
+          <div class="timer-label">
+            <div>Timer: <strong>3 minutes</strong></div>
+            <div class="muted">Finish strong</div>
+          </div>
+          <div class="timer-bar" aria-hidden="true"><div class="fill" data-target-seconds="180"></div></div>
+        </div>
+
+        <div class="divider"></div>
+
+        <h2>⏱️ Timer</h2>
+        <p class="muted">Choose a preset for a round or set a custom time. Use Start / Pause / Reset to control the countdown. The visual bar fills as time elapses.</p>
+
+        <div style="display:flex;gap:0.75rem;flex-wrap:wrap;align-items:center">
+          <div class="timer-controls" role="group" aria-label="Preset timers">
+            <button class="preset-btn" data-seconds="30">Round 1 — 30s</button>
+            <button class="preset-btn" data-seconds="120">Round 2 — 2m</button>
+            <button class="preset-btn" data-seconds="180">Round 3 — 3m</button>
+            <button class="preset-btn" data-seconds="300">Custom 5m</button>
+          </div>
+
+          <div style="margin-left:auto;display:flex;gap:0.6rem;align-items:center">
+            <div class="time-display" id="timeDisplay" aria-live="polite">00:30</div>
+            <div>
+              <button class="btn" id="startBtn">Start</button>
+            </div>
+            <div>
+              <button class="btn secondary" id="pauseBtn">Pause</button>
+            </div>
+            <div>
+              <button class="btn secondary" id="resetBtn">Reset</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="timer-bar" style="margin-top:0.9rem" aria-hidden="true">
+          <div class="fill" id="mainFill" style="width:0%"></div>
+        </div>
+
+        <div style="margin-top:0.85rem;">
+          <label for="notes"><strong>Notes / Quick Journal</strong></label>
+          <div id="notes" class="notes" contenteditable="true" role="textbox" aria-label="Session notes">Strengths, improvements, phrases to try next time...</div>
+        </div>
+
+        <div class="cta-row">
+          <button class="btn" id="visualStart">Start Visual Practice</button>
+          <button class="btn secondary" onclick="window.print()">Print Worksheet</button>
+        </div>
+      </section>
+
+      <aside class="card right-col">
+        <div class="meta">
+          <div>
+            <h2>Quick Setup</h2>
+            <div class="small"><span>Duration</span><strong>15–20 min</strong></div>
+            <div class="small"><span>Materials</span><strong>Mirror, timer, cue cards</strong></div>
+          </div>
+
+          <div>
+            <h2>Personas to Try</h2>
+            <ul class="persona-list">
+              <li><strong>No goals</strong> — redirect to discovery</li>
+              <li><strong>Has goals</strong> — align loan to goals</li>
+              <li><strong>Refinance-savvy</strong> — focus on numbers</li>
+              <li><strong>New to refinancing</strong> — educate simply</li>
+            </ul>
+          </div>
+
+          <div>
+            <h2>Common Objections</h2>
+            <ul style="margin-bottom:0.35rem;">
+              <li>“Your rates are too high!”</li>
+              <li>“I’m shopping around.”</li>
+              <li>“I don’t want to pay closing costs.”</li>
+            </ul>
+          </div>
+
+          <div>
+            <h2>Combo Closing Template</h2>
+            <p style="margin:0.15rem 0;">1. Reaffirm value · 2. Ask close · 3. Handle hesitation</p>
+            <p style="margin:0;"><em>“Based on what we discussed, this loan fits your goals. Should we move forward today?”</em></p>
+          </div>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <script>
+    (function() {
+      const presetButtons = document.querySelectorAll('.preset-btn');
+      const timeDisplay = document.getElementById('timeDisplay');
+      const startBtn = document.getElementById('startBtn');
+      const pauseBtn = document.getElementById('pauseBtn');
+      const resetBtn = document.getElementById('resetBtn');
+      const mainFill = document.getElementById('mainFill');
+      const visualStart = document.getElementById('visualStart');
+
+      let totalSeconds = 30;
+      let remaining = totalSeconds;
+      let timerInterval = null;
+      let running = false;
+
+      function formatTime(s) {
+        const mm = String(Math.floor(s / 60)).padStart(2, '0');
+        const ss = String(s % 60).padStart(2, '0');
+        return mm + ':' + ss;
+      }
+
+      function updateDisplay() {
+        timeDisplay.textContent = formatTime(remaining);
+        const pct = totalSeconds > 0 ? Math.min(100, ((totalSeconds - remaining) / totalSeconds) * 100) : 0;
+        mainFill.style.width = pct + '%';
+      }
+
+      function setTimer(seconds) {
+        totalSeconds = Math.max(1, Math.floor(seconds));
+        remaining = totalSeconds;
+        stopTimer();
+        updateDisplay();
+      }
+
+      function tick() {
+        if (remaining <= 0) {
+          stopTimer();
+          mainFill.style.width = '100%';
+          if (mainFill.animate) mainFill.animate([{opacity:1},{opacity:0.4},{opacity:1}], {duration:900, iterations:3});
+          running = false;
+          startBtn.textContent = 'Start';
+          return;
+        }
+        remaining--;
+        updateDisplay();
+      }
+
+      function startTimer() {
+        if (running) return;
+        running = true;
+        startBtn.textContent = 'Running';
+        timerInterval = setInterval(tick, 1000);
+      }
+
+      function pauseTimer() {
+        if (!running) return;
+        running = false;
+        startBtn.textContent = 'Start';
+        clearInterval(timerInterval);
+      }
+
+      function stopTimer() {
+        running = false;
+        clearInterval(timerInterval);
+        startBtn.textContent = 'Start';
+      }
+
+      function resetTimer() {
+        stopTimer();
+        remaining = totalSeconds;
+        mainFill.style.width = '0%';
+        updateDisplay();
+      }
+
+      presetButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const seconds = parseInt(btn.getAttribute('data-seconds'), 10) || 30;
+          setTimer(seconds);
+          document.querySelectorAll('.round .fill').forEach(el => {
+            const target = parseInt(el.getAttribute('data-target-seconds')) || 30;
+            const w = Math.min(100, (target / seconds) * 100);
+            el.style.width = Math.max(8, Math.min(95, w)) + '%';
+          });
+        });
+      });
+
+      startBtn.addEventListener('click', () => {
+        if (!running) startTimer();
+        else pauseTimer();
+      });
+
+      pauseBtn.addEventListener('click', pauseTimer);
+      resetBtn.addEventListener('click', resetTimer);
+
+      visualStart.addEventListener('click', () => {
+        setTimer(30);
+        startTimer();
+      });
+
+      setTimer(30);
+      updateDisplay();
+
+      document.addEventListener('keydown', (e) => {
+        if (e.code === 'Space' && !['INPUT','TEXTAREA'].includes(document.activeElement.tagName)) {
+          e.preventDefault();
+          if (!running) startTimer(); else pauseTimer();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
